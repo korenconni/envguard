@@ -56,6 +56,14 @@ def test_unknown_keys_ignored_when_allowed():
     assert result.unknown_keys == []
 
 
+def test_whitespace_only_required_value_treated_as_empty():
+    """A value containing only whitespace should be treated as empty."""
+    schema = _schema(required={"API_KEY"})
+    result = validate_env({"API_KEY": "   "}, schema)
+    assert not result.is_valid
+    assert "API_KEY" in result.empty_required
+
+
 # ---------------------------------------------------------------------------
 # schema_loader
 # ---------------------------------------------------------------------------
