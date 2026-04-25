@@ -11,9 +11,14 @@ from envguard.output import _supports_color
 from envguard.sort_reporter import format_sort_result, format_sorted_preview
 
 
+def _resolve_color(args: argparse.Namespace) -> bool:
+    """Return True if color output should be used based on args and terminal support."""
+    return _supports_color() and not getattr(args, "no_color", False)
+
+
 def cmd_sort_check(args: argparse.Namespace) -> int:
     """Check whether an .env file is sorted; exit 1 if not."""
-    use_color = _supports_color() and not getattr(args, "no_color", False)
+    use_color = _resolve_color(args)
     try:
         result, _ = sort_env_file(args.env_file)
     except Exception as exc:  # noqa: BLE001
@@ -26,7 +31,7 @@ def cmd_sort_check(args: argparse.Namespace) -> int:
 
 def cmd_sort_show(args: argparse.Namespace) -> int:
     """Print the sorted .env content to stdout without modifying the file."""
-    use_color = _supports_color() and not getattr(args, "no_color", False)
+    use_color = _resolve_color(args)
     try:
         result, rendered = sort_env_file(args.env_file)
     except Exception as exc:  # noqa: BLE001
@@ -41,7 +46,7 @@ def cmd_sort_show(args: argparse.Namespace) -> int:
 
 def cmd_sort_write(args: argparse.Namespace) -> int:
     """Sort the .env file in-place."""
-    use_color = _supports_color() and not getattr(args, "no_color", False)
+    use_color = _resolve_color(args)
     try:
         result, rendered = sort_env_file(args.env_file)
     except Exception as exc:  # noqa: BLE001
