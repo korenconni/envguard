@@ -19,6 +19,24 @@ class TrimResult:
         """True when at least one value was changed."""
         return len(self.changed_keys) > 0
 
+    def summary(self) -> str:
+        """Return a human-readable summary of what was trimmed.
+
+        Returns a single-line string describing how many keys were changed
+        and listing them by name.  Useful for logging or CLI output.
+
+        Examples::
+
+            >>> result.summary()
+            'Trimmed 2 key(s) in .env: API_KEY, SECRET'
+            >>> unchanged_result.summary()
+            'No changes in .env'
+        """
+        if not self.changed_keys:
+            return f"No changes in {self.source}"
+        keys = ", ".join(self.changed_keys)
+        return f"Trimmed {len(self.changed_keys)} key(s) in {self.source}: {keys}"
+
 
 def trim_env(env: Dict[str, str]) -> TrimResult:
     """Return a TrimResult with leading/trailing whitespace stripped from values."""
